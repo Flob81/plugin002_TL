@@ -8,7 +8,12 @@ import SectionMessage from '@atlaskit/section-message';
 
 function App() {
   const [extensionData, setExtensionData] = useState(null);
-  const [configuration, setConfiguration] = useState(() => ({regexp: '^[A-Za-z]+$'}));
+  const [configuration, setConfiguration] = useState(() => ({
+    noneLabel: '',
+    redLabel: '',
+    yellowLabel: '',
+    greenLabel: ''
+  }));
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -24,7 +29,10 @@ function App() {
     try {
       return await view.submit({
         configuration: {
-          regexp: formData.regexp
+          noneLabel: formData.noneLabel,
+          redLabel: formData.redLabel,
+          yellowLabel: formData.yellowLabel,
+          greenLabel: formData.greenLabel
         }
       })
     } catch {
@@ -43,7 +51,16 @@ function App() {
           <PageHeader>Edit configuration</PageHeader>
           <FormSection>
             {error && <SectionMessage appearance="error">{error}</SectionMessage>}
-            <Field name="regexp" label="Validation RegExp" defaultValue={configuration.regexp}>
+            <Field name="noneLabel" label="Label for ⚪️" defaultValue={configuration.noneLabel}>
+              {({fieldProps}) => <TextField width={400} {...fieldProps} />}
+            </Field>
+            <Field name="redLabel" label="Label for 🔴" defaultValue={configuration.redLabel}>
+              {({fieldProps}) => <TextField width={400} {...fieldProps} />}
+            </Field>
+            <Field name="yellowLabel" label="Label for 🟡" defaultValue={configuration.yellowLabel}>
+              {({fieldProps}) => <TextField width={400} {...fieldProps} />}
+            </Field>
+            <Field name="greenLabel" label="Label for 🟢" defaultValue={configuration.greenLabel}>
               {({fieldProps}) => <TextField width={400} {...fieldProps} />}
             </Field>
           </FormSection>

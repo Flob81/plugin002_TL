@@ -2,7 +2,7 @@ import React, {useEffect, useState, useCallback} from 'react';
 import {view} from '@forge/bridge';
 import styled from 'styled-components';
 import Form, {FormHeader, FormSection, FormFooter, Field} from '@atlaskit/form';
-import TextField from '@atlaskit/textfield';
+import Select from '@atlaskit/select';
 import Button, {ButtonGroup} from '@atlaskit/button';
 import SectionMessage from '@atlaskit/section-message';
 
@@ -32,18 +32,21 @@ function App() {
     await formValueSubmit(formData.fieldValue);
   }, [formValueSubmit]);
 
-  const handleOnBlur = useCallback(async (e, dirty) => {
-    e.preventDefault();
-    if (dirty) {
-      await formValueSubmit(e.target.value);
-    }
-  }, [formValueSubmit]);
-
   const isIssueView = extensionData?.renderContext && extensionData.renderContext === 'issue-view';
 
   if (!extensionData) {
     return <>{'Loading...'}</>;
   }
+
+  const configuration = extensionData.configuration || {};
+  const options = [
+    { value: 'none', label: `⚪️ ${configuration.noneLabel || ''}` },
+    { value: 'red', label: `🔴 ${configuration.redLabel || ''}` },
+    { value: 'yellow', label: `🟡 ${configuration.yellowLabel || ''}` },
+    { value: 'green', label: `🟢 ${configuration.greenLabel || ''}` }
+  ];
+
+  const defaultValue = options.find(o => o.value === extensionData.fieldValue) || options[0];
 
   return (
       <Content isIssueView={isIssueView}>
@@ -55,8 +58,14 @@ function App() {
                     <FormHeader title="Edit field"/>
                     <FormSection>
                       {error && <SectionMessage appearance="error">{error}</SectionMessage>}
-                      <Field name="fieldValue" label="Custom field value" defaultValue={extensionData.fieldValue}>
-                        {({fieldProps}) => <TextField {...fieldProps} />}
+                      <Field name="fieldValue" label="Traffic light" defaultValue={defaultValue.value}>
+                        {({fieldProps}) => (
+                          <Select
+                            {...fieldProps}
+                            options={options}
+                            defaultValue={defaultValue}
+                          />
+                        )}
                       </Field>
                     </FormSection>
                     <FormFooter>
@@ -73,10 +82,20 @@ function App() {
               )
             }
             return (
-                <form {...formProps} onBlur={(event) => handleOnBlur(event, dirty)}>
+                <form {...formProps}>
                   {error && <SectionMessage appearance="error">{error}</SectionMessage>}
-                  <Field name="fieldValue" label="Custom field value" defaultValue={extensionData.fieldValue}>
-                    {({fieldProps}) => <TextField {...fieldProps} />}
+                  <Field name="fieldValue" label="Traffic light" defaultValue={defaultValue.value}>
+                    {({fieldProps}) => (
+                      <Select
+                        {...fieldProps}
+                        options={options}
+                        defaultValue={defaultValue}
+                        onChange={(opt) => {
+                          fieldProps.onChange(opt.value);
+                          formValueSubmit(opt.value);
+                        }}
+                      />
+                    )}
                   </Field>
                 </form>
             )

@@ -1,8 +1,8 @@
 modules:
   jira:customFieldType:
-    - key: plugin002-tl-configurable-validation
-      name: plugin002_TL
-      description: A basic custom field with a configurable validation.
+    - key: traffic-light-field
+      name: Traffic Light Field
+      description: Custom field that displays a traffic light with configurable labels.
       type: string
       contextConfig:
         resource: main
@@ -15,9 +15,8 @@ modules:
           - issue-view
           - portal-request
         validation:
-          expression: value == null || !!value.match(configuration?.regexp ||
-            "^[A-Za-z]+$")
-          errorMessage: The value is invalid
+          expression: value == null || ['none','red','yellow','green'].includes(value)
+          errorMessage: Invalid traffic light value
 resources:
   - key: main
     path: static/configurable-validation/build
