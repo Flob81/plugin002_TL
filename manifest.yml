@@ -46,7 +46,7 @@ resources:
   - key: edit
     path: static/edit/build
   - key: view
-    path: static/view/build
+    path: static/traffic-view/build
 permissions:
   content:
     styles:
