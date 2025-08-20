@@ -17,11 +17,36 @@ modules:
         validation:
           expression: value == null || ['none','red','yellow','green'].includes(value)
           errorMessage: Invalid traffic light value
+      view:
+        resource: view
+        render: native
+        experience:
+          - issue-view
+          - portal-view
+        formatter:
+          expression: |-
+            // Emoji-Triade pro Wert
+            let v = value ?? 'none';
+            let emoji = v === 'red' ? '🔴⚪️⚪️'
+                      : v === 'yellow' ? '⚪️🟡⚪️'
+                      : v === 'green' ? '⚪️⚪️🟢'
+                      : '⚪️⚪️⚪️';
+            // Label aus der Context-Config
+            let label = v === 'red' ? (configuration?.redLabel || '')
+                       : v === 'yellow' ? (configuration?.yellowLabel || '')
+                       : v === 'green' ? (configuration?.greenLabel || '')
+                       : (configuration?.noneLabel || '');
+            `${emoji}${label ? ' ' + label : ''}`
+          export: true
+      searchSuggestions:
+        expression: '["none","red","yellow","green"]'
 resources:
   - key: main
     path: static/configurable-validation/build
   - key: edit
     path: static/edit/build
+  - key: view
+    path: static/view/build
 permissions:
   content:
     styles:
