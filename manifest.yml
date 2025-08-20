@@ -1,0 +1,35 @@
+modules:
+  jira:customFieldType:
+    - key: plugin002-tl-configurable-validation
+      name: plugin002_TL
+      description: A basic custom field with a configurable validation.
+      type: string
+      contextConfig:
+        resource: main
+        layout: basic
+      edit:
+        resource: edit
+        experience:
+          - issue-create
+          - issue-transition
+          - issue-view
+          - portal-request
+        validation:
+          expression: value == null || !!value.match(configuration?.regexp ||
+            "^[A-Za-z]+$")
+          errorMessage: The value is invalid
+resources:
+  - key: main
+    path: static/configurable-validation/build
+  - key: edit
+    path: static/edit/build
+permissions:
+  content:
+    styles:
+      - unsafe-inline
+app:
+  runtime:
+    name: nodejs22.x
+    memoryMB: 256
+    architecture: arm64
+  id: ari:cloud:ecosystem::app/a9095b11-0814-4217-8cdb-e69ddfe50973
